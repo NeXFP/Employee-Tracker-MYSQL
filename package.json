@@ -1,0 +1,26 @@
+{
+  "name": "Employee-Tracker-MYSQL",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "mysql2": "^2.3.3-rc.0",
+    "node": "^17.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeXFP/Employee-Tracker-MYSQL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NeXFP/Employee-Tracker-MYSQL/issues"
+  },
+  "homepage": "https://github.com/NeXFP/Employee-Tracker-MYSQL#readme"
+}
