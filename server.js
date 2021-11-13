@@ -102,8 +102,6 @@ function showEmployee(){
 
 function addDepartment(){
 
-    let depArray = [];
-
     inquirer.prompt([
         {
             type:'input',
@@ -111,15 +109,17 @@ function addDepartment(){
             message:'Which department would you like to add?'
         }
     ]).then(function(data){
-        db.query(`INSERT INTO department (name) VALUES ('${data.department}'`), (err) => {
+        db.query(`INSERT INTO department (name) VALUES ('${data.department}')`, (err) => {
             if (err) throw err;
-
             promptUser();
-        };
+        });
     });
-};
+    
+}
 
 function addRole(){
+    /*let depArray = [];
+
     inquirer.prompt([
         {
             type:'input',
@@ -139,6 +139,6 @@ function addRole(){
         }
     ]).then(function(data){
         db.query(``)
-    })
+    })*/
 }
 afterConnection();
