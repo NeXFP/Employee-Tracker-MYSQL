@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "inquirer": "^8.2.0",
     "mysql2": "^2.3.3-rc.0",
     "node": "^17.0.1"
   },

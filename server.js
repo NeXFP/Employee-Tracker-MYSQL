@@ -1,7 +1,7 @@
 const db = require('./db/connection');
 const inquirer = require('inquirer');
 
-afterConnection = () => {
+function afterConnection() {
     console.log('___________________________________');
     console.log('*!!        EMPLOYEE MANAGER         !!*');
     console.log('___________________________________');
@@ -9,7 +9,7 @@ afterConnection = () => {
     promptUser();
 };
 
-const promptUser = () => {
+function promptUser() {
     inquirer.prompt([
         {
             type: 'list',
@@ -56,3 +56,89 @@ const promptUser = () => {
             };
         });
 };
+
+function showDepartment(){
+    const sql = `SELECT department.id, department.name AS department FROM department`
+
+    db.query(sql, (err,results) => {
+        if (err) throw err;
+
+        const transformed = results.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+        console.table(transformed);
+        promptUser();
+    })
+}
+
+
+function showRole(){
+    const sql = `SELECT role.id , role.title, role.salary, department.name AS department
+                FROM role JOIN department ON role.department_id = department.id`
+
+    db.query(sql, (err,results) => {
+        if (err) throw err;
+
+        const transformed = results.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+        console.table(transformed);
+        promptUser();
+    })
+}
+
+
+function showEmployee(){
+    const sql = `SELECT employee.id , employee.first_name, employee.last_name, role.title ,
+                department.name AS department, role.salary, manager.first_name AS manager
+                FROM employee JOIN role ON employee.role_id = role.id
+                JOIN department ON role.department_id = department.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id;`
+
+    db.query(sql, (err,results) => {
+        if (err) throw err;
+
+        const transformed = results.reduce((acc, {id, ...x}) => { acc[id] = x; return acc}, {});
+        console.table(transformed);
+        promptUser();
+    })
+}
+
+function addDepartment(){
+
+    let depArray = [];
+
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'department',
+            message:'Which department would you like to add?'
+        }
+    ]).then(function(data){
+        db.query(`INSERT INTO department (name) VALUES ('${data.department}'`), (err) => {
+            if (err) throw err;
+
+            promptUser();
+        };
+    });
+};
+
+function addRole(){
+    inquirer.prompt([
+        {
+            type:'input',
+            name:'role',
+            message:'Which role would you like to add?'
+        },
+        {
+            type:'input',
+            name:'salary',
+            message:'What is the salary for this role?'
+        },
+        {
+            type:'list',
+            name:'dept',
+            message:'What department is this role in?',
+            choices: depArray
+        }
+    ]).then(function(data){
+        db.query(``)
+    })
+}
+afterConnection();
