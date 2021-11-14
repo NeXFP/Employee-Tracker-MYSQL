@@ -118,27 +118,43 @@ function addDepartment(){
 }
 
 function addRole(){
-    /*let depArray = [];
+    db.query(`SELECT department.name FROM department`, (err,results) => {
+        if (err) throw err;
 
-    inquirer.prompt([
-        {
-            type:'input',
-            name:'role',
-            message:'Which role would you like to add?'
-        },
-        {
-            type:'input',
-            name:'salary',
-            message:'What is the salary for this role?'
-        },
-        {
-            type:'list',
-            name:'dept',
-            message:'What department is this role in?',
-            choices: depArray
+        let depArray = [];
+
+        for(let i = 0; i < results.length; i++) {
+            depArray.push(results[i].name)
         }
-    ]).then(function(data){
-        db.query(``)
-    })*/
+        
+        inquirer.prompt([
+            {
+                type:'input',
+                name:'role',
+                message:'Which role would you like to add?'
+            },
+            {
+                type:'input',
+                name:'salary',
+                message:'What is the salary for this role?'
+            },
+            {
+                type:'list',
+                name:'dept',
+                message:'What department is this role in?',
+                choices: depArray
+            }
+        ]).then(function(data) {
+            db.query(`SELECT FROM department WHERE name = '${data.department}'`, (err, results) => {
+                if (err) throw err;
+
+                db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.role}','${data.salary}', '${results[0].department_id}')`, (err) => {
+                    if (err) throw err;
+
+                    promptUser();
+                });
+            });
+        });
+    });
 }
 afterConnection();
