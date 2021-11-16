@@ -117,16 +117,17 @@ function addDepartment(){
     
 }
 
+
+
 function addRole(){
-    db.query(`SELECT department.name FROM department`, (err,results) => {
+    db.query(`SELECT * FROM department`, (err,results) => {
         if (err) throw err;
 
         let depArray = [];
-
         for(let i = 0; i < results.length; i++) {
-            depArray.push(results[i].name)
+            depArray.push(results[i].name);
         }
-        
+        console.log(results);
         inquirer.prompt([
             {
                 type:'input',
@@ -145,10 +146,13 @@ function addRole(){
                 choices: depArray
             }
         ]).then(function(data) {
-            db.query(`SELECT FROM department WHERE name = '${data.department}'`, (err, results) => {
-                if (err) throw err;
 
-                db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.role}','${data.salary}', '${results[0].department_id}')`, (err) => {
+            console.log(depArray);
+            console.log(data.dept);
+            db.query(`SELECT * FROM department WHERE name = '${data.dept}'`, (err, results) => {
+                if (err) throw err;
+                console.log(results);
+                db.query(`INSERT INTO role (title, salary, department_id) VALUES ('${data.role}','${data.salary}', '${results[0].id}')`, (err) => {
                     if (err) throw err;
 
                     promptUser();
