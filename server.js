@@ -117,8 +117,6 @@ function addDepartment(){
     
 }
 
-
-
 function addRole(){
     db.query(`SELECT * FROM department`, (err,results) => {
         if (err) throw err;
@@ -162,8 +160,81 @@ function addRole(){
     });
 }
 
+function addEmployee(){
+    db.query(`SELECT * FROM role`, (err, results) => {
+        if (err) throw err;
+        let roleArr = [];
+
+        for(let i = 0; i < results.length; i++){
+            roleArr.push(results[i].title)
+        }
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "first",
+                message: "What is the first name of the employee you would like to add?"
+            },
+            {
+                type: "input",
+                name: "last",
+                message: "What is the last name of the employee you would like to add?"
+            },
+            {
+                type: "list",
+                name: "roles",
+                message: "What role would you like to give this new employee?",
+                choices: roleArr
+            }
+        ]).then(function(data){
+            const first_name = data.first;
+            const last_name = data.last;
+            const role = data.roles;
+
+            db.query(`SELECT * FROM employee`, (err, results) => {
+                if (err) throw err;
+
+                let managerArr = [];
+
+                for(let i = 0; i < results.length; i++){
+                    managerArr.push(`${results[i].first_name} ${results[i].last_name}`)
+                }
+                inquirer.prompt([
+                    {
+                        type:"list",
+                        name:"manager",
+                        message:"Who is the manager for this employee?",
+                        choices: managerArr
+                    }
+                ]).then(function(results){
+                    let manager = results.manager;
+                    manager = manager.split(" ");
+
+                    db.query(`SELECT * FROM role WHERE title = "${role}"`,(err, results) => {
+                        if (err) throw err;
+
+                        const roleId = results[0].id;
+
+                        db.query(`SELECT * FROM employee WHERE first_name = "${manager[0]}" AND last_name = "${manager[1]}"`, (err, results) => {
+                            if (err) throw err;
+
+                            const managerId = results[0].id;
+
+                            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                            VALUES ("${first_name}","${last_name}",${roleId}, ${managerId})`, (err) => {
+                                if (err) throw err;
+
+                                promptUser();
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+}
+
 function updateEmployee() {
-    db.query(`SELECT * FROM employee` , (err,results) =>{
+    db.query(`SELECT * FROM employee` , (err,results) => {
         if (err) throw err;
         let employeeArr = [];
 
