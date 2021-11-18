@@ -161,4 +161,52 @@ function addRole(){
         });
     });
 }
+
+function updateEmployee() {
+    db.query(`SELECT * FROM employee` , (err,results) =>{
+        if (err) throw err;
+        let employeeArr = [];
+
+        for(let i = 0; i < results.length; i++){
+            employeeArr.push(`${results[i].first_name} ${results[i].last_name}`)
+        }
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "name",
+                message: "Which employee would you like to update?",
+                choices: employeeArr
+            }
+        ]).then(function(results) {
+            let employee = results.name;
+            employee = employee.split(" ");
+
+            db.query(`SELECT * FROM role`, (err,results) => {
+                if (err) throw err;
+                let roleArr = [];
+
+                for(let i = 0; i < results.length; i++){
+                    roleArr.push(results[i].title)
+                }
+                inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "title",
+                        message: "What role would you like to give this employee?",
+                        choices: roleArr
+                    }
+                ]).then(function(results){
+                    db.query(`SELECT * FROM role WHERE title = "${results.title}"`, (err, results) => {
+                        if (err) throw err;
+                        db.query(`UPDATE employee SET role_id = ${results[0].id} WHERE first_name = "${employee[0]}" AND last_name = "${employee[1]}"`, (err) =>{
+                            if (err) throw err;
+                        })
+                    })
+                })
+            });
+            promptUser();
+        });
+    })
+};
+
 afterConnection();
